@@ -5,7 +5,7 @@ class Customer(BaseModel):
     name: str
     last_name: str
     dni: int
-    balance: str
+    balance: float
 
 
 class CustomerResponse(BaseModel):
@@ -13,3 +13,15 @@ class CustomerResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class CustomersList(BaseModel):
+    dni: int
+    balance: float
+
+    class Config:
+        orm_mode = True
+
+
+class CustomerUpdateAccountBalance(BaseModel):
+    balance: float
