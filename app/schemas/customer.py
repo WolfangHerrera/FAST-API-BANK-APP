@@ -1,11 +1,11 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 
 class Customer(BaseModel):
     name: str
     last_name: str
     dni: int
-    amount: str
+    balance: str
 
 
 class CustomerResponse(BaseModel):

@@ -23,7 +23,7 @@ class Account(BaseModel):
     name: str
     last_name: str
     dni: int
-    amount: float
+    balance: float
 
     class Config:
         allow_population_by_field_name = True
@@ -35,6 +35,6 @@ class Account(BaseModel):
                 "name": "Wolfang",
                 "last_name": "Herrera",
                 "dni": 1001222555,
-                "amount": 1000000
+                "balance": 1000000
             }
         }
