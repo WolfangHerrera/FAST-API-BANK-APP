@@ -1,0 +1,19 @@
+from fastapi import FastAPI
+from motor.motor_asyncio import AsyncIOMotorClient
+from app.routers import customer
+from app.core.config import settings
+from dotenv import load_dotenv
+
+load_dotenv()
+
+app = FastAPI()
+
+
+client = AsyncIOMotorClient(settings.mongo_uri)
+db = client.mydatabase
+
+app.include_router(customer.router)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
