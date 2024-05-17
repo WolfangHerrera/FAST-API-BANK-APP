@@ -14,11 +14,12 @@ class PyObjectId(ObjectId):
         return ObjectId(v)
 
     @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(type="string")
+    def __get_pydantic_json_schema__(cls, schema):
+        schema.update(type="string")
+        return schema
 
 
-class Account(BaseModel):
+class Customer(BaseModel):
     id: PyObjectId = None
     name: str
     last_name: str
@@ -30,11 +31,22 @@ class Account(BaseModel):
         json_encoders = {
             ObjectId: str
         }
-        schema_extra = {
-            "example": {
-                "name": "Wolfang",
-                "last_name": "Herrera",
-                "dni": 1001222555,
-                "balance": 1000000
-            }
-        }
+
+
+class CustomerResponse(BaseModel):
+    dni: int
+
+    class Config:
+        orm_mode = True
+
+
+class CustomersList(BaseModel):
+    dni: int
+    balance: float
+
+    class Config:
+        orm_mode = True
+
+
+class CustomerUpdateAccountBalance(BaseModel):
+    balance: float

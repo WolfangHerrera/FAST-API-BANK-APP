@@ -1,15 +1,13 @@
 from typing import List
 from app.db.database import db
-from app.models.customer import Customer
+from app.models.customer import Customer, CustomerResponse, CustomerUpdateAccountBalance
 from pymongo.errors import DuplicateKeyError
 
-from app.schemas.customer import CustomerResponse
 
-
-async def create_account(customer: Customer) -> Customer:
+async def create_account(customer: Customer) -> CustomerResponse:
     existing_customer = await db.accounts.find_one({'dni': customer.dni})
     if existing_customer:
-        raise ValueError('Customer already has a account.')
+        raise ValueError('Customer already has an account.')
 
     customer_dict = customer.dict()
     customer_dict.pop('id', None)
@@ -17,7 +15,7 @@ async def create_account(customer: Customer) -> Customer:
     try:
         await db.accounts.insert_one(customer_dict)
     except DuplicateKeyError:
-        raise ValueError('Customer already has a account.')
+        raise ValueError('Customer already has an account.')
 
     created_customer = await db.accounts.find_one({'dni': customer.dni})
     return CustomerResponse(**created_customer)
