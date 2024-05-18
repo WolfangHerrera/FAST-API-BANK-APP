@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -25,7 +26,7 @@ class GetAccountCustomersListResponse(BaseModel):
 
 
 class UpdateAccountBalanceCustomerInput(BaseModel):
-    account_id: str
+    account_id: Optional[str] = ''
     balance: float
 
 
