@@ -24,28 +24,29 @@ class Customer(BaseModel):
     name: str
     last_name: str
     dni: int
+    account_id: int
     balance: float
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
         json_encoders = {
             ObjectId: str
         }
 
 
 class CustomerResponse(BaseModel):
-    dni: int
+    account_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class CustomersList(BaseModel):
-    dni: int
+    account_id: int
     balance: float
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class CustomerUpdateAccountBalance(BaseModel):

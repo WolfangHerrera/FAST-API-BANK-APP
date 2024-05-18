@@ -1,22 +1,18 @@
 from pydantic import BaseModel
 
 
-class Customer(BaseModel):
+class CreateAccountCustomerInput(BaseModel):
     name: str
     last_name: str
     dni: int
-    balance: float
 
 
-class CustomerResponse(BaseModel):
-    dni: int
-
-    class Config:
-        orm_mode = True
+class CreateAccountCustomerResponse(BaseModel):
+    account_id: int
 
 
 class CustomersList(BaseModel):
-    dni: int
+    account_id: int
     balance: float
 
     class Config:
