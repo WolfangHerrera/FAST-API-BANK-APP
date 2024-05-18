@@ -1,27 +1,34 @@
+from typing import Optional
 from pydantic import BaseModel
 
 
-class Customer(BaseModel):
+class AccountCustomerModel(BaseModel):
     name: str
     last_name: str
     dni: int
+    account_id: str
     balance: float
 
 
-class CustomerResponse(BaseModel):
+class CreateAccountCustomerInput(BaseModel):
+    name: str
+    last_name: str
     dni: int
 
-    class Config:
-        orm_mode = True
+
+class CreateAccountCustomerResponse(BaseModel):
+    account_id: str
 
 
-class CustomersList(BaseModel):
-    dni: int
+class GetAccountCustomersListResponse(BaseModel):
+    account_id: str
     balance: float
 
-    class Config:
-        orm_mode = True
 
-
-class CustomerUpdateAccountBalance(BaseModel):
+class UpdateAccountBalanceCustomerInput(BaseModel):
+    account_id: Optional[str] = ''
     balance: float
+
+
+class CustomerMessageResponse(BaseModel):
+    message: str
