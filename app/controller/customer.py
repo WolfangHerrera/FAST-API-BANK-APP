@@ -9,6 +9,9 @@ from app.schemas.customer import AccountCustomerModel, CreateAccountCustomerInpu
 async def create_account(customer: CreateAccountCustomerInput) -> CreateAccountCustomerResponse:
     try:
         account_id = str(random.randint(10000, 99999))
+        if (customer.dni == 0):
+            account_id = '0'
+
         customer_dict = AccountCustomerModel(
             name=customer.name,
             last_name=customer.last_name,
