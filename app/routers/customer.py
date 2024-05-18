@@ -1,19 +1,19 @@
 from typing import List
-from fastapi import APIRouter, HTTPException
-from app.controller.customer import create_account, get_accounts, update_account_balance
-from app.schemas.customer import CreateAccountCustomerInput, CreateAccountCustomerResponse
+from fastapi import APIRouter
+from app.controller.customer import create_account, get_accounts
+from app.schemas.customer import CreateAccountCustomerInput, CreateAccountCustomerResponse, CustomerMessageResponse, GetAccountCustomersListResponse
 
 router = APIRouter()
 
 
-@router.post("/accounts", response_model=CreateAccountCustomerResponse, status_code=201)
+@router.post("/accounts", response_model=CreateAccountCustomerResponse, status_code=200)
 async def create_customer_endpoint(customer: CreateAccountCustomerInput):
     return await create_account(customer)
 
 
-# @router.get("/accounts", response_model=List[CustomersList], status_code=200)
-# async def get_accounts_endpoint():
-#     return await get_accounts()
+@router.get("/accounts", response_model=List[GetAccountCustomersListResponse], status_code=200)
+async def get_accounts_endpoint():
+    return await get_accounts()
 
 
 # @router.put("/accounts/{account_id}", response_model=None, status_code=200)

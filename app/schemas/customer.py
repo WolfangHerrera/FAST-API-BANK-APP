@@ -1,6 +1,14 @@
 from pydantic import BaseModel
 
 
+class AccountCustomerModel(BaseModel):
+    name: str
+    last_name: str
+    dni: int
+    account_id: str
+    balance: float
+
+
 class CreateAccountCustomerInput(BaseModel):
     name: str
     last_name: str
@@ -8,16 +16,18 @@ class CreateAccountCustomerInput(BaseModel):
 
 
 class CreateAccountCustomerResponse(BaseModel):
-    account_id: int
+    account_id: str
 
 
-class CustomersList(BaseModel):
-    account_id: int
+class GetAccountCustomersListResponse(BaseModel):
+    account_id: str
     balance: float
 
-    class Config:
-        orm_mode = True
 
-
-class CustomerUpdateAccountBalance(BaseModel):
+class UpdateAccountBalanceCustomerInput(BaseModel):
+    account_id: str
     balance: float
+
+
+class CustomerMessageResponse(BaseModel):
+    message: str
