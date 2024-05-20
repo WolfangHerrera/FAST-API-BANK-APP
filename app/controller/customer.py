@@ -52,22 +52,25 @@ async def get_accounts(connection_database=None) -> List[GetAccountCustomersList
         raise HTTPException(status_code=500, detail=str(e))
 
 
-async def update_account_balance(customer: UpdateAccountBalanceCustomerInput) -> CustomerMessageResponse:
+async def update_account_balance(customer: UpdateAccountBalanceCustomerInput, connection_database=None) -> CustomerMessageResponse:
     try:
-        customer_account = await collection.find_one({'account_id': customer.account_id})
-        if not customer_account:
-            raise HTTPException(
-                status_code=404, detail='The account not found')
+        if connection_database is not None:
+            collection = connection_database
 
-        current_balance = customer_account.get('balance', 0)
-        new_balance = current_balance + customer.balance
-        balance_updated = await collection.update_one({'account_id': customer.account_id}, {"$set": {"balance": new_balance}})
+            customer_account = await collection.find_one({'account_id': customer.account_id})
+            if customer_account is None:
+                raise HTTPException(
+                    status_code=404, detail='The account not found')
 
-        if balance_updated.modified_count == 0:
-            raise HTTPException(
-                status_code=404, detail='The account balance has not been updated or account not found')
+            current_balance = customer_account.get('balance', 0)
+            new_balance = current_balance + customer.balance
+            balance_updated = await collection.update_one({'account_id': customer.account_id}, {"$set": {"balance": new_balance}})
 
-        return CustomerMessageResponse(message='The account balance has been updated')
+            if balance_updated.modified_count == 0:
+                raise HTTPException(
+                    status_code=404, detail='The account balance has not been updated or account not found')
+
+            return CustomerMessageResponse(message='The account balance has been updated')
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f'{str(e)}')
+        raise HTTPException(status_code=500, detail=str(e))

@@ -1,5 +1,5 @@
-from app.schemas.customer import GetAccountCustomersListResponse
-from app.controller.customer import get_accounts
+from app.schemas.customer import CustomerMessageResponse, GetAccountCustomersListResponse, UpdateAccountBalanceCustomerInput
+from app.controller.customer import get_accounts, update_account_balance
 from fastapi import HTTPException
 import pytest
 import mongomock
@@ -20,6 +20,8 @@ def mongo_client():
 async def mongo_collection(mongo_client):
     db = mongo_client.test_database
     collection = db.test_collection
+
+    await collection.insert_many(customers_data)
     yield collection
 
 
@@ -60,3 +62,17 @@ async def test_get_accounts(async_mongo_collections):
         GetAccountCustomersListResponse(account_id='1002', balance=7000000)
     ]
     assert accounts == expected_accounts
+
+
+async def test_update_account_balance(mongo_collection):
+    customer_dict = UpdateAccountBalanceCustomerInput(
+        account_id='TEST',
+        balance=1000000
+    )
+
+    customer = await update_account_balance(customer_dict, mongo_collection)
+
+    response = CustomerMessageResponse(
+        message='The account balance has been updated'
+    )
+    assert customer == response
