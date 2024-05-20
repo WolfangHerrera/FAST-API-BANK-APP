@@ -2,12 +2,14 @@ import random
 from typing import List
 
 from fastapi import HTTPException
+from motor.motor_asyncio import AsyncIOMotorCursor, AsyncIOMotorCollection
 from app.db.database import collection
 from app.schemas.customer import AccountCustomerModel, CreateAccountCustomerInput, CreateAccountCustomerResponse, GetAccountCustomersListResponse, UpdateAccountBalanceCustomerInput, CustomerMessageResponse
 
 
-async def create_account(customer: AccountCustomerModel, connection_database=None) -> CreateAccountCustomerResponse:
+async def create_account(customer: CreateAccountCustomerInput, connection_database=None) -> CreateAccountCustomerResponse:
     try:
+        global collection
         account_id = str(random.randint(10000, 99999))
 
         if connection_database is not None:
@@ -28,12 +30,16 @@ async def create_account(customer: AccountCustomerModel, connection_database=Non
         raise HTTPException(status_code=500, detail=str(e))
 
 
-async def get_accounts(connection_database=None) -> List[GetAccountCustomersListResponse]:
+async def get_accounts(connection_database: AsyncIOMotorCollection = None) -> List[GetAccountCustomersListResponse]:
     try:
+        global collection
+
         if connection_database is not None:
             collection = connection_database
-
-        accounts = collection.find()
+            accounts = collection.find()
+        else:
+            cursor: AsyncIOMotorCursor = collection.find()
+            accounts = await cursor.to_list(None)
 
         if not accounts:
             raise HTTPException(
@@ -54,23 +60,25 @@ async def get_accounts(connection_database=None) -> List[GetAccountCustomersList
 
 async def update_account_balance(customer: UpdateAccountBalanceCustomerInput, connection_database=None) -> CustomerMessageResponse:
     try:
+        global collection
+
         if connection_database is not None:
             collection = connection_database
 
-            customer_account = await collection.find_one({'account_id': customer.account_id})
-            if customer_account is None:
-                raise HTTPException(
-                    status_code=404, detail='The account not found')
+        customer_account = await collection.find_one({'account_id': customer.account_id})
+        if customer_account is None:
+            raise HTTPException(
+                status_code=404, detail='The account not found')
 
-            current_balance = customer_account.get('balance', 0)
-            new_balance = current_balance + customer.balance
-            balance_updated = await collection.update_one({'account_id': customer.account_id}, {"$set": {"balance": new_balance}})
+        current_balance = customer_account.get('balance', 0)
+        new_balance = current_balance + customer.balance
+        balance_updated = await collection.update_one({'account_id': customer.account_id}, {"$set": {"balance": new_balance}})
 
-            if balance_updated.modified_count == 0:
-                raise HTTPException(
-                    status_code=404, detail='The account balance has not been updated or account not found')
+        if balance_updated.modified_count == 0:
+            raise HTTPException(
+                status_code=404, detail='The account balance has not been updated or account not found')
 
-            return CustomerMessageResponse(message='The account balance has been updated')
+        return CustomerMessageResponse(message='The account balance has been updated')
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
