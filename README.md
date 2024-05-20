@@ -4,7 +4,7 @@
 
 ---
 
-[![](docs/BackEnd-README.jpg)](https://github.com/WolfangHerrera/FASTAPI-BANK-APP)
+[![](docs/BackEnd-README.jpg)](https://github.com/WolfangHerrera/FAST-API-BANK-APP)
 
 ---
 
