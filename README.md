@@ -76,7 +76,7 @@ curl -X GET 'http://localhost:8000/accounts'
 ![](docs/UpdateAccountBalance-README.jpg)
 
 ```sh
-curl -X PATCH 'http://localhost:8000/accounts/1025452' \
+curl -X PATCH 'http://localhost:8000/accounts/{account_id}' \
 --header 'Content-Type: application/json' \
 --data '{
     "balance" : 500000
